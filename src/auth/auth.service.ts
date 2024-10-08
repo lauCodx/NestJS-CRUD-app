@@ -1,31 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { HttpException, Injectable } from '@nestjs/common';
+import { SignUpDto} from './dto/signUpDto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schema/user.schema';
 import { Model } from 'mongoose';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private usermodel: Model<User>){}
-  
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  async createUser(signUpDto: SignUpDto){
+
+    const {name, email, password, confirmPassword} = signUpDto;
+
+    if (password !== confirmPassword){
+      throw new HttpException('Password and confirm Password do not match', 400)
+    }
+    const find = await this.userModel.findOne({email:email})
+
+    if(find){
+      throw new HttpException('User already existing', 400)
+    }
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    return await this.userModel.create({
+      name,
+      email,
+      password: hashPassword
+    })
+
+
+
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  findUser(user){
+    return this.userModel.findOne(user)
   }
 }
