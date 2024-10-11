@@ -1,18 +1,44 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [AuthModule,
     ConfigModule.forRoot({
       isGlobal:true,
+     
       envFilePath: '.env'
     }),
-    MongooseModule.forRoot(process.env.CONNECTION_STRING)
 
+    JwtModule.registerAsync({
+      global:true,
+      inject:[ConfigService],
+      useFactory: ()=>({
+        secret:process.env.SECRET_KEY
+      })
+
+    }),
+
+   /* MongooseModule.forRootAsync({
+      useFactory: () => ({
+        uri: process.env.DB_STRING,  
+      }),
+    })*/
+
+    MongooseModule.forRootAsync({
+      imports:[ConfigModule],
+      useFactory: async () =>({
+        uri: process.env.DB_STRING
+      }),
+
+      inject:[ConfigService]
+    })
   ],
+
   controllers: [],
   providers: [],
 })
 export class AppModule {}
+

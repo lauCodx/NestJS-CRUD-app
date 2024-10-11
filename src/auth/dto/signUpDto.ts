@@ -7,14 +7,17 @@ export class SignUpDto {
     name: string;
 
     @IsEmail()
+    @IsNotEmpty()
     email:string;
 
     @IsString()
+    @IsNotEmpty()
     @MinLength(5)
     @Matches(/^(?=.*[0-9])/, {message:"Password must contain atleast one number"})
     password: string;
 
     @IsString()
+    @IsNotEmpty()
     @MinLength(5)
     @ValidateIf((o) => o.password)
     confirmPassword:string
