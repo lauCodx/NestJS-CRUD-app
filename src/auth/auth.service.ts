@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt'
 import { SigninDto } from './dto/signInDto';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from 'src/schema/refresh-token.schema';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -45,12 +46,28 @@ export class AuthService {
     if(!passwordMatch){
       throw new HttpException('Invalid credentials', 404)
     }
+   
+    return this.generateAccessToken(find._id, find.email)
+  }
 
-    const accessToken = await this.jwtService.sign({_id:find._id, email:find.email}, {expiresIn: '2h'})
 
+  async generateAccessToken(_id:any, email:string) {
+    const accessToken = this.jwtService.sign({_id, email}, {expiresIn:'15m'})
+    const refreshtoken = uuidv4();
+    await this.storeRefreshToken(refreshtoken, _id)
     return{
-      accessToken
+      accessToken,
+      refreshtoken
     }
+  }
+
+  async storeRefreshToken(token: string, userId:any) {
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 3) // set the expiry date to 3 days
+    await this.refreshToken.create({
+      token, expiryDate, userId
+    })
+
   }
   
 }
