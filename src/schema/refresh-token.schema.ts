@@ -9,6 +9,9 @@ export class RefreshToken extends Document{
     @Prop({required: true, type: mongoose.Types.ObjectId})
     userId: mongoose.Types.ObjectId;
 
+    @Prop({required:false})
+    email:string;
+
     @Prop({required: true})
     expiryDate: Date
 

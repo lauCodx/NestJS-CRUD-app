@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignUpDto} from './dto/signUpDto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from 'src/schema/user.schema';
@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>, @InjectModel(RefreshToken.name) private refreshToken: Model<RefreshToken>, private jwtService: JwtService ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>, @InjectModel(RefreshToken.name) private refreshTokenModel: Model<RefreshToken>, private jwtService: JwtService ) {}
 
   async signup(signUpDto: SignUpDto){
 
@@ -46,13 +46,26 @@ export class AuthService {
     if(!passwordMatch){
       throw new HttpException('Invalid credentials', 404)
     }
-   
-    return this.generateAccessToken(find._id, find.email)
+
+    return await this.generateAccessToken(find._id, find.email)
+  }
+
+  async refreshTokens(refreshToken: string){
+    const token = await this.refreshTokenModel.findOneAndDelete({
+      token: refreshToken,
+      expiryDate:{ $gte: new Date()}
+    })
+
+    if (!token){
+      throw new UnauthorizedException('Refresh token is invalid!')
+    }
+
+    return this.generateAccessToken(token.userId, token.email)
   }
 
 
   async generateAccessToken(_id:any, email:string) {
-    const accessToken = this.jwtService.sign({_id, email}, {expiresIn:'15m'})
+    const accessToken = this.jwtService.sign({_id, email}, {expiresIn:'1h'})
     const refreshtoken = uuidv4();
     await this.storeRefreshToken(refreshtoken, _id)
     return{
@@ -64,7 +77,7 @@ export class AuthService {
   async storeRefreshToken(token: string, userId:any) {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 3) // set the expiry date to 3 days
-    await this.refreshToken.create({
+    await this.refreshTokenModel.create({
       token, expiryDate, userId
     })
 
