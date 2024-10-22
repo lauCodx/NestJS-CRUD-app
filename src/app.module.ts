@@ -3,6 +3,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { Appcontroller } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [AuthModule,
@@ -37,8 +39,8 @@ import { JwtModule } from '@nestjs/jwt';
     })
   ],
 
-  controllers: [],
-  providers: [],
+  controllers: [Appcontroller],
+  providers: [AppService],
 })
 export class AppModule {}
 
