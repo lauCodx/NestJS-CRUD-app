@@ -8,7 +8,8 @@ export class Book extends Document {
     @Prop({required: true, unique: true, maxlength:50, lowercase:true})
     titile: string;
 
-    @Prop({required:false, maxlength:50})
+    @Prop({required:true, maxlength:50})
+    author: string;
 
     @Prop({required: false, maxlength: 500})
     description: string

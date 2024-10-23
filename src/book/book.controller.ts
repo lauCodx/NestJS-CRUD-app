@@ -3,8 +3,13 @@ import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
-@Controller('book')
+@Controller('api')
 export class BookController {
-  constructor(private readonly bookService: BookService) {}
-  
+  constructor(private  bookService: BookService) {}
+
+  @Post('createBook')
+  createBook (@Body() createBookDto: CreateBookDto){
+    return this.bookService.createbooks(createBookDto)
+  }
+
 }
