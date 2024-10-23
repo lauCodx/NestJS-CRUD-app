@@ -6,5 +6,5 @@ import { UpdateBookDto } from './dto/update-book.dto';
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
-
+  
 }
