@@ -5,6 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { Appcontroller } from './app.controller';
 import { AppService } from './app.service';
+import { BookModule } from './book/book.module';
+
 
 @Module({
   imports: [AuthModule,
@@ -36,7 +38,11 @@ import { AppService } from './app.service';
       }),
 
       inject:[ConfigService]
-    })
+    }),
+
+   BookModule,
+
+   
   ],
 
   controllers: [Appcontroller],
