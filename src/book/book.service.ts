@@ -10,15 +10,16 @@ export class BookService {
 
   constructor(@InjectModel(Book.name) private BookModel:Model<Book>){}
 
-  async createbooks (createBookDto: CreateBookDto){
-    const {title} = createBookDto
+  async createbooks (createBookDto: Partial< CreateBookDto> & {createdBy: string}) {
+    const {title, createdBy} = createBookDto
 
     const find = await this.BookModel.findOne({title: title.toLowerCase()})
     if(find){
       throw new BadRequestException('Book already exist!')
     }
     const book = await this.BookModel.create({
-      createBookDto
+      ...createBookDto,
+      createdBy
     })
 
     return book;

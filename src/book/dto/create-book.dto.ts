@@ -1,9 +1,8 @@
-import { IsLowercase, IsMongoId, isNotEmpty, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
+import {  IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
 
 export class CreateBookDto {
     @IsString()
     @IsNotEmpty()
-    @IsLowercase()
     title: string;
 
     @IsString()
@@ -15,7 +14,4 @@ export class CreateBookDto {
     @IsOptional()
     description?: string
 
-    @IsMongoId()
-    @IsNotEmpty()
-    createdBy: string
 }
