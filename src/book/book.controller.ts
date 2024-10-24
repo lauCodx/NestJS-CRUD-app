@@ -18,11 +18,13 @@ export class BookController {
       createdBy: userId
     })
 
-//  return {
-//   userId: req.user._id,
-//   ...createBookDto
-//  }
-  
+  }
+
+  @Get('getBooks')
+  getBooks(@Req() req:AuthUser){
+    const userId= req.user._id
+    const books = this.bookService.showBooks(userId)
+    return books
   }
 
 

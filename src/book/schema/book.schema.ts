@@ -5,7 +5,7 @@ import { Document, Schema as MongooseSchema } from "mongoose";
 @Schema({timestamps: true})
 export class Book extends Document {
 
-    @Prop({required: true, unique: true, maxlength:50, lowercase:true})
+    @Prop({required: true, maxlength:50, lowercase:true})
     title: string;
 
     @Prop({required:true, maxlength:50})

@@ -13,6 +13,10 @@ export class BookService {
   async createbooks (createBookDto: Partial< CreateBookDto> & {createdBy: string}) {
     const {title, createdBy} = createBookDto
 
+    if (!title){
+      throw new BadRequestException('Title is required')
+    }
+
     const find = await this.BookModel.findOne({title: title.toLowerCase()})
     if(find){
       throw new BadRequestException('Book already exist!')
@@ -23,5 +27,12 @@ export class BookService {
     })
 
     return book;
+  };
+
+  async showBooks(userId: string){
+
+    const findBook = await this.BookModel.find({createdBy: userId})
+
+    return findBook;
   }
 }
