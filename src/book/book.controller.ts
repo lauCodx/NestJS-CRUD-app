@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -27,6 +27,14 @@ export class BookController {
     return books
   }
 
+  @Get('getABook/:id')
+  getABook(@Param('id') id:string, @Req() req:AuthUser){
+    const userId = req.user._id;
 
+    if(!userId){
+      throw new UnauthorizedException("Not authorized to Access this book")
+    }
+    return this.bookService.getASinglkeBook(id)
+  }
 
 }
