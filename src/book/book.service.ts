@@ -58,4 +58,18 @@ export class BookService {
     }
     return await this.BookModel.findByIdAndUpdate(id, updateBodyDto, {new:true})
   }
+
+  async deleteBooks (id: string, userId: string){
+    const book = await this.BookModel.findById({_id: id});
+
+    if(!book){
+      throw new NotFoundException("Book not found!")
+    };
+
+
+    if(book.createdBy.toString() !== userId){
+      throw new UnauthorizedException('You are not authorized to delete this book')
+    }
+    return await this.BookModel.findByIdAndDelete({_id:id})
+  }
 }

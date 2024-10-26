@@ -48,7 +48,16 @@ export class BookController {
     const updateBook = this.bookService.updateBooks(id, updateBookDto, userId)
 
     return updateBook;
-    
-  }
+  };
 
+  @Delete('deleteBook/:id')
+  deleteABokk(@Param('id') id:string, @Req() req:AuthUser){
+    const userId = req.user._id;
+
+    if(!userId){
+      throw new UnauthorizedException("Not authorized to Access this route")
+    };
+
+    const deleteBook = this.bookService.deleteBooks(id, userId)
+  }
 }
