@@ -11,7 +11,7 @@ export class Book extends Document {
     @Prop({required:true, maxlength:50})
     author: string;
 
-    @Prop({required: false, maxlength: 500})
+    @Prop({required: false, maxlength: 500, trim: true})
     description: string;
 
     @Prop({type: MongooseSchema.Types.ObjectId, required: true, ref:'User' })
