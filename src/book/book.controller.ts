@@ -59,5 +59,6 @@ export class BookController {
     };
 
     const deleteBook = this.bookService.deleteBooks(id, userId)
+    return deleteBook
   }
 }
