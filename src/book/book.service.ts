@@ -45,4 +45,13 @@ export class BookService {
     }
     return book;
   }
+
+  async updateBook (id: string, updateBodyDto:UpdateBookDto){
+    const book = await this.BookModel.findById({_id: id});
+
+    if(!book){
+      throw new NotFoundException("Book not found!")
+    }
+    return await this.BookModel.findByIdAndUpdate(id, updateBodyDto, {new:true})
+  }
 }
