@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -37,7 +37,7 @@ export class BookService {
     return findBook;
   }
 
-  async getASinglkeBook(id: string){
+  async getASingleBook(id: string){
     const book = await this.BookModel.findById({_id:id})
 
     if(!book){
@@ -46,11 +46,15 @@ export class BookService {
     return book;
   }
 
-  async updateBook (id: string, updateBodyDto:UpdateBookDto){
+  async updateBooks (id: string, updateBodyDto:UpdateBookDto, userId:string){
     const book = await this.BookModel.findById({_id: id});
 
     if(!book){
       throw new NotFoundException("Book not found!")
+    }
+
+    if(book.createdBy.toString() !== userId){
+      throw new UnauthorizedException('You are not authorized to update this book')
     }
     return await this.BookModel.findByIdAndUpdate(id, updateBodyDto, {new:true})
   }

@@ -32,9 +32,23 @@ export class BookController {
     const userId = req.user._id;
 
     if(!userId){
-      throw new UnauthorizedException("Not authorized to Access this book")
+      throw new UnauthorizedException("Not authorized to Access this route")
     }
-    return this.bookService.getASinglkeBook(id)
+    return this.bookService.getASingleBook(id)
+  }
+
+  @Patch('updateBook/:id')
+  updateAbook(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto, @Req() req:AuthUser){
+    const userId = req.user._id;
+
+    if(!userId){
+      throw new UnauthorizedException("Not authorized to Access this route")
+    };
+
+    const updateBook = this.bookService.updateBooks(id, updateBookDto, userId)
+
+    return updateBook;
+    
   }
 
 }
