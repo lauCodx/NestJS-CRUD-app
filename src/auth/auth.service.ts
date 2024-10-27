@@ -31,7 +31,7 @@ export class AuthService {
         400,
       );
     }
-    const find = await this.userModel.findOne({ email: email });
+    const find = await this.userModel.findOne({ email: email.toLowerCase() });
 
     if (find) {
       throw new HttpException('User already existing', 400);
@@ -48,7 +48,7 @@ export class AuthService {
   async signin(signInDto: SigninDto) {
     const { email, password } = signInDto;
 
-    const find = await this.userModel.findOne({ email: email });
+    const find = await this.userModel.findOne({  email: email.toLowerCase() });
     if (!find) {
       throw new HttpException('User not found!', 404);
     }
