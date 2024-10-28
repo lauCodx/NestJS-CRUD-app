@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString, Matches, MinLength, ValidateIf } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MinLength, ValidateIf } from "class-validator";
+import { Role } from "../enum/roles.enum";
 
 export class SignUpDto {
 
@@ -20,5 +21,9 @@ export class SignUpDto {
     @IsNotEmpty()
     @MinLength(5)
     @ValidateIf((o) => o.password)
-    confirmPassword:string
+    confirmPassword:string;
+
+    @IsEnum(Role)
+    @IsOptional()
+    role?: Role
 }
