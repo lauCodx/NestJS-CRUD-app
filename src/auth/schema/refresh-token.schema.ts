@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document } from "mongoose";
+import { Role } from "../enum/roles.enum";
 
 @Schema({timestamps: true, versionKey: false})
 export class RefreshToken extends Document{
@@ -11,6 +12,9 @@ export class RefreshToken extends Document{
 
     @Prop({required:false})
     email:string;
+
+    @Prop({required: false })
+    role: Role
 
     @Prop({required: true})
     expiryDate: Date

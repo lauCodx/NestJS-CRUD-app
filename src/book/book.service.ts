@@ -72,4 +72,9 @@ export class BookService {
     }
     return await this.BookModel.findByIdAndDelete({_id:id})
   }
+
+  async getAllBooksByAdmin(){
+    const showAllBooks = await this.BookModel.find()
+    return showAllBooks;
+  }
 }

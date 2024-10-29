@@ -1,6 +1,7 @@
 import {
   HttpException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignUpDto } from './dto/signUpDto';
@@ -12,6 +13,8 @@ import { SigninDto } from './dto/signInDto';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from 'src/auth/schema/refresh-token.schema';
 import { v4 as uuidv4 } from 'uuid';
+import { Role } from './enum/roles.enum';
+import { UpdateSignUpDto } from './dto/signUpUpdateDto';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +61,7 @@ export class AuthService {
       throw new HttpException('Invalid credentials', 404);
     }
 
-    return await this.generateAccessToken(find._id, find.email);
+    return await this.generateAccessToken(find._id, find.email, find.role);
   }
 
   async refreshTokens(refreshToken: string) {
@@ -71,12 +74,12 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token is invalid!');
     }
 
-    return this.generateAccessToken(token.userId, token.email);
+    return this.generateAccessToken(token.userId, token.email, token.role);
   }
 
-  async generateAccessToken(_id: any, email: string) {
+  async generateAccessToken(_id: any, email: string, role: string) {
     const accessToken = this.jwtService.sign(
-      { _id, email },
+      { _id, email, role },
       { expiresIn: '1h' },
     );
     const refreshtoken = uuidv4();
@@ -95,5 +98,17 @@ export class AuthService {
       {$set:{ expiryDate, token}},
       {upsert: true}
     );
+  }
+
+  async updateRole (id: string, role:UpdateSignUpDto ){
+    const find = await this.userModel.findById({_id: id})
+
+    if(!find){
+      throw new NotFoundException('User not found')
+    }
+
+    const update = await this.userModel.findByIdAndUpdate(id, role, {new:true})
+
+    return update;
   }
 }

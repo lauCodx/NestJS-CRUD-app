@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signUpDto';
 import { SigninDto } from './dto/signInDto';
 import { refreshTokenDto } from './dto/refreshTokenDto';
+import { Role } from './enum/roles.enum';
+import { UpdateSignUpDto } from './dto/signUpUpdateDto';
 
 
 @Controller('auth')
@@ -24,8 +26,9 @@ export class AuthController {
     return this.authUserService.refreshTokens(refreshTokenDto.refreshToken);
   }
 
-  @Get()
-  protectedRoute(@Req() req) {
-    return { message: 'This route is protected', user: req.email };
+  @Patch("updateRole/:id")
+  updateUserRole(@Param('id') id: string, @Body() role:UpdateSignUpDto){
+    return this.authUserService.updateRole(id, role)
   }
+
 }

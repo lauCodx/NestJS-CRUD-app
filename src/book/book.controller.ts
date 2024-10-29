@@ -4,7 +4,11 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { AuthGuard } from 'src/middleware/auth.guard';
 import { AuthUser } from 'src/interface/user.interface';
+import { RolesGuard } from 'src/auth/roles/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorators';
+import { Role } from 'src/auth/enum/roles.enum';
 
+@UseGuards(RolesGuard)
 @UseGuards(AuthGuard)
 @Controller('api')
 export class BookController {
@@ -60,5 +64,11 @@ export class BookController {
 
     const deleteBook = this.bookService.deleteBooks(id, userId)
     return deleteBook
+  }
+
+  @Roles(Role.Admin)
+  @Get('showAllBooks')
+  showBooks(){
+    return this.bookService.getAllBooksByAdmin()
   }
 }
